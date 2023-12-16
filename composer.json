@@ -1,0 +1,19 @@
+{
+    "name": "hexlet/code",
+    "description": "hexlet project",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hexlet\\Code\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "justbepanda",
+            "email": "justbepanda@gmail.com"
+        }
+    ],
+    "require": {}
+}
