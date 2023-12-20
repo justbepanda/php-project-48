@@ -20,5 +20,8 @@ test-coverage:
 test-coverage-text:
 	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-text
 
+validate:
+	composer validate
+
 gendiff:
 	./bin/gendiff

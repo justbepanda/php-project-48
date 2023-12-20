@@ -1,1 +1,5 @@
 #!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../src/autoload.php';
+require_once __DIR__ . '/../src/docopt.php';
