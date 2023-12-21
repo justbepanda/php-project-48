@@ -1,5 +1,9 @@
 #!/usr/bin/env php
 <?php
 
+use function Differ\Differ\genDiff;
+
 require_once __DIR__ . '/../src/autoload.php';
 require_once __DIR__ . '/../src/docopt.php';
+
+genDiff('yo');
