@@ -3,7 +3,12 @@
 
 use function Differ\Differ\genDiff;
 
-require_once __DIR__ . '/../src/autoload.php';
-require_once __DIR__ . '/../src/docopt.php';
 
-genDiff('yo');
+require_once __DIR__ . '/../src/autoload.php';
+//require_once __DIR__ . '/../src/docopt.php';
+require_once __DIR__ . '/../src/gendiff.php';
+
+if ($args['<firstFile>'] and $args['<secondFile>']) {
+    $diff = genDiff($args['<firstFile>'], $args['<secondFile>']);
+    print_r($diff);
+}
