@@ -12,6 +12,3 @@ jobs:
         uses: paambaati/codeclimate-action@v5.0.0
         env:
           CC_TEST_REPORTER_ID: 614339019d0f26476f6101143a958ab5b56c61703cdb879c8b4328c625c0354a
-        with:
-          coverageCommand: make coverage-test
-          coverageLocations: build/logs/clover.xml
