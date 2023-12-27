@@ -3,8 +3,12 @@
   "description": "hexlet project",
   "autoload": {
     "psr-4": {
-      "Hexlet\\Code\\": "src/"
-    }
+      "Hexlet\\Code\\": "src/",
+      "Differ\\Differ\\": "src/"
+    },
+    "files": [
+      "src/genDiff.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
