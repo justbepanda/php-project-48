@@ -22,4 +22,4 @@ jobs:
         with:
           # The report file must be there, otherwise Code Climate won't find it
           coverageCommand: make test-coverage
-          coverageLocations: ${{github.workspace}}/build/logs/clever.xml
+          coverageLocations: ${{github.workspace}}/build/logs/clover.xml
