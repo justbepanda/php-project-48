@@ -5,10 +5,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: xdebug
       - run: make install
       - run: make lint
       - run: make test
-      - name: Publish code coverage
+      - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
-          CC_TEST_REPORTER_ID: 614339019d0f26476f6101143a958ab5b56c61703cdb879c8b4328c625c0354a
+          # Set CC_TEST_REPORTER_ID as secret of your repo
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+
+        with:
+          # The report file must be there, otherwise Code Climate won't find it
+          coverageCommand: make test-coverage
+          coverageLocations: ${{github.workspace}}/build/logs/clever.xml
