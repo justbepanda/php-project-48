@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1703687607">
+  <project timestamp="1703687607">
+    <file name="/mnt/s/OpenServer/domains/php-project-48/src/autoload.php">
+      <line num="3" type="stmt" count="0"/>
+      <line num="4" type="stmt" count="0"/>
+      <line num="5" type="stmt" count="0"/>
+      <line num="6" type="stmt" count="0"/>
+      <line num="8" type="stmt" count="0"/>
+      <metrics loc="10" ncloc="10" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="0" elements="5" coveredelements="0"/>
+    </file>
+    <file name="/mnt/s/OpenServer/domains/php-project-48/src/docopt.php">
+      <metrics loc="2" ncloc="2" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/mnt/s/OpenServer/domains/php-project-48/src/genDiff.php">
+      <line num="8" type="stmt" count="1"/>
+      <line num="9" type="stmt" count="1"/>
+      <line num="10" type="stmt" count="1"/>
+      <line num="11" type="stmt" count="1"/>
+      <line num="14" type="stmt" count="1"/>
+      <line num="17" type="stmt" count="1"/>
+      <line num="23" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="26" type="stmt" count="1"/>
+      <line num="27" type="stmt" count="1"/>
+      <line num="28" type="stmt" count="1"/>
+      <line num="29" type="stmt" count="1"/>
+      <line num="30" type="stmt" count="1"/>
+      <line num="31" type="stmt" count="1"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="34" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="1"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="39" type="stmt" count="1"/>
+      <line num="41" type="stmt" count="1"/>
+      <line num="46" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
+      <metrics loc="49" ncloc="46" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="22" coveredelements="22"/>
+    </file>
+    <metrics files="3" loc="61" ncloc="58" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="22" elements="27" coveredelements="22"/>
+  </project>
+</coverage>
