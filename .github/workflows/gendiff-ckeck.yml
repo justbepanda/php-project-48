@@ -22,6 +22,5 @@ jobs:
 
         with:
           # The report file must be there, otherwise Code Climate won't find it
-          coverageCommand: make test-coverage
+          coverageCommand: XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-clover ${{github.workspace}}/build/logs/clover.xml
           coverageLocations: ${{github.workspace}}/build/logs/clover.xml
-          debug: true
