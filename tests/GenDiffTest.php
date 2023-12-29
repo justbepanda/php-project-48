@@ -36,10 +36,10 @@ class GenDiffTest extends TestCase
         $file2 = $this->getFixtureFullPath('file1.json');
 
         $this->assertEmpty(genDiff($file1, $file2));
-
     }
 
-    public function testWrongFormat(): void {
+    public function testWrongFormat(): void
+    {
         $file1 = $this->getFixtureFullPath('file1.jpg');
         $file2 = $this->getFixtureFullPath('file2.jpg');
 

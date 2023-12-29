@@ -1,10 +1,10 @@
 <?php
 
+namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Differ\Parsers\getJsonDiff;
-use function Differ\Parsers\getYamlDiff;
+use function Differ\Parsers\{getJsonDiff, getYamlDiff};
 
 class ParsersTest extends TestCase
 {
@@ -13,6 +13,7 @@ class ParsersTest extends TestCase
         $parts = [__DIR__, 'fixtures', $fixtureName];
         return realpath(implode('/', $parts));
     }
+
     public function testJsonDiff(): void
     {
         $data1 = file_get_contents($this->getFixtureFullPath('file1.json'));
@@ -21,6 +22,7 @@ class ParsersTest extends TestCase
 
         $this->assertEquals($expected, getJsonDiff($data1, $data2));
     }
+
     public function testYamlDiff(): void
     {
         $data1 = file_get_contents($this->getFixtureFullPath('file1.yml'));
