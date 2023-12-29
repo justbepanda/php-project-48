@@ -13,8 +13,8 @@ if (file_exists($autoloadPath1)) {
 }
 // phpcs:enable
 
-use function Differ\Parsers\getJsonDiff;
-use function Differ\Parsers\getYamlDiff;
+use function Differ\Differ\Parsers\getJsonDiff;
+use function Differ\Differ\Parsers\getYamlDiff;
 
 function genDiff($pathToFile1, $pathToFile2): string
 {

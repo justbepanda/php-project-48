@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ\Parsers;
+namespace Differ\Differ\Parsers;
 
 // phpcs:disable
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';

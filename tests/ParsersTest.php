@@ -4,7 +4,8 @@ namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Differ\Parsers\{getJsonDiff, getYamlDiff};
+use function Differ\Differ\Parsers\getJsonDiff;
+use function Differ\Differ\Parsers\getYamlDiff;
 
 class ParsersTest extends TestCase
 {
