@@ -7,7 +7,7 @@
       "Differ\\Differ\\": "src/"
     },
     "files": [
-      "src/genDiff.php",
+      "src/GenDiff.php",
       "src/Parsers.php"
     ]
   },
