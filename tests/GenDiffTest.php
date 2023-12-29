@@ -14,12 +14,35 @@ class GenDiffTest extends TestCase
         return realpath(implode('/', $parts));
     }
 
-    public function testGenDiff(): void
+    public function testJson(): void
     {
         $file1 = $this->getFixtureFullPath('file1.json');
         $file2 = $this->getFixtureFullPath('file2.json');
         $expected = file_get_contents($this->getFixtureFullPath('expected.txt'));
 
         $this->assertEquals($expected, genDiff($file1, $file2));
+    }
+    public function testYaml(): void
+    {
+        $file1 = $this->getFixtureFullPath('file1.yml');
+        $file2 = $this->getFixtureFullPath('file2.yml');
+        $expected = file_get_contents($this->getFixtureFullPath('expected.txt'));
+
+        $this->assertEquals($expected, genDiff($file1, $file2));
+    }
+    public function testDifferentFormats(): void
+    {
+        $file1 = $this->getFixtureFullPath('file1.yml');
+        $file2 = $this->getFixtureFullPath('file1.json');
+
+        $this->assertEmpty(genDiff($file1, $file2));
+
+    }
+
+    public function testWrongFormat(): void {
+        $file1 = $this->getFixtureFullPath('file1.jpg');
+        $file2 = $this->getFixtureFullPath('file2.jpg');
+
+        $this->assertEmpty(genDiff($file1, $file2));
     }
 }
