@@ -136,6 +136,5 @@ function formatDataStylish($diff, $replacer = ' ', $spacesCount = 4)
     };
 
     $result = $iter($diff, 1);
-    dump($result);
     return $result;
 }
