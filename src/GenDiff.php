@@ -19,30 +19,44 @@ use function Differ\Differ\Parsers\parseYaml;
 
 function genDiff($pathToFile1, $pathToFile2, $formatter = 'stylish')
 {
-
     // Получить содержимое файлов
     $content1 = file_get_contents($pathToFile1);
     $content2 = file_get_contents($pathToFile2);
 
-    // В зависимости от расширения файла, получить содержание в нужном парсере
-    if (str_ends_with($pathToFile1, '.json') && str_ends_with($pathToFile2, '.json')) {
-        $parsedData1 = parseJson($content1);
-        $parsedData2 = parseJson($content2);
-    } elseif (
-        str_ends_with($pathToFile1, '.yml') && str_ends_with($pathToFile2, '.yml') ||
-        str_ends_with($pathToFile1, '.yaml') && str_ends_with($pathToFile2, '.yaml')
-    ) {
-        $parsedData1 = parseYaml($content1);
-        $parsedData2 = parseYaml($content2);
-    } else {
+    // Получить расширения файлов
+    $extension1 = pathinfo($pathToFile1, PATHINFO_EXTENSION);
+    $extension2 = pathinfo($pathToFile2, PATHINFO_EXTENSION);
+
+    // Проверить, что расширения файлов совпадают
+    if ($extension1 !== $extension2) {
         return false;
     }
-    $diff = getDiff($parsedData1, $parsedData2);
 
-    if ($formatter === 'stylish') {
-        $formattedData = formatDataStylish($diff);
+    // В зависимости от расширения файла, получить содержание в нужном парсере
+    switch ($extension1) {
+        case 'json':
+            $parsedData1 = parseJson($content1);
+            $parsedData2 = parseJson($content2);
+            break;
+        case 'yml':
+        case 'yaml':
+            $parsedData1 = parseYaml($content1);
+            $parsedData2 = parseYaml($content2);
+            break;
+        default:
+            return false;
     }
 
+    $diff = getDiff($parsedData1, $parsedData2);
+
+    // В зависимости от форматтера, форматировать данные
+    switch ($formatter) {
+        case 'stylish':
+            $formattedData = formatDataStylish($diff);
+            break;
+        default:
+            return "Неизвестный форматтер: $formatter";
+    }
 
     return $formattedData;
 }
