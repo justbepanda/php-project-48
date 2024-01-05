@@ -4,5 +4,5 @@
 ### GenDiff tests and linter status:
 [![gendiff-check](https://github.com/justbepanda/php-project-48/actions/workflows/gendiff-ckeck.yml/badge.svg)](https://github.com/justbepanda/php-project-48/actions/workflows/gendiff-ckeck.yml) [![Maintainability](https://api.codeclimate.com/v1/badges/b4d14c24de6e75a2d515/maintainability)](https://codeclimate.com/github/justbepanda/php-project-48/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/b4d14c24de6e75a2d515/test_coverage)](https://codeclimate.com/github/justbepanda/php-project-48/test_coverage)
 
-### Asciinema:
-[![asciicast](https://asciinema.org/a/8JzF7hlzl3C7gQtNkZzRd1laV.svg)](https://asciinema.org/a/8JzF7hlzl3C7gQtNkZzRd1laV)
+### Asciinema Demo:
+[![asciicast](https://asciinema.org/a/XTl0NMal1tgU69rLldL7IRuhy.svg)](https://asciinema.org/a/XTl0NMal1tgU69rLldL7IRuhy)

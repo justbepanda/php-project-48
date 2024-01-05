@@ -17,7 +17,7 @@ if (file_exists($autoloadPath1)) {
 use function Differ\Differ\Parsers\parseJson;
 use function Differ\Differ\Parsers\parseYaml;
 
-function genDiff($pathToFile1, $pathToFile2, $formatter = 'stylish')
+function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
 {
     // Получить содержимое файлов
     $content1 = file_get_contents($pathToFile1);
@@ -67,20 +67,23 @@ function getDiff($data1, $data2)
     sort($keys);
 
     $result = array_reduce($keys, function ($acc, $key) use ($data1, $data2) {
-        if (array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
-            if (is_array($data1[$key]) && is_array($data2[$key])) {
-                $acc[] = ['name' => $key, 'flag' => ' ', 'value' => getDiff($data1[$key], $data2[$key])];
-            } elseif ($data1[$key] === $data2[$key]) {
-                $acc[] = ['name' => $key, 'flag' => ' ', 'value' => $data1[$key]];
-            } else {
-                $acc[] = ['name' => $key, 'flag' => '-', 'value' => $data1[$key]];
-                $acc[] = ['name' => $key, 'flag' => '+', 'value' => $data2[$key]];
-            }
-        } elseif (!array_key_exists($key, $data1)) {
-            $acc[] = ['name' => $key, 'flag' => '+', 'value' => $data2[$key]];
+        $flag = ' ';
+        if (!array_key_exists($key, $data1)) {
+            $flag = '+';
+            $value = $data2[$key];
+        } elseif (!array_key_exists($key, $data2)) {
+            $flag = '-';
+            $value = $data1[$key];
+        } elseif (is_array($data1[$key]) && is_array($data2[$key])) {
+            $value = getDiff($data1[$key], $data2[$key]);
+        } elseif ($data1[$key] === $data2[$key]) {
+            $value = $data1[$key];
         } else {
             $acc[] = ['name' => $key, 'flag' => '-', 'value' => $data1[$key]];
+            $flag = '+';
+            $value = $data2[$key];
         }
+        $acc[] = ['name' => $key, 'flag' => $flag, 'value' => $value];
         return $acc;
     }, []);
     return $result;
@@ -100,32 +103,33 @@ function formatDataStylish($diff, $replacer = ' ', $spacesCount = 4)
     $iter = function ($currentTree, $depth) use (&$iter, $spacesCount, $replacer) {
         $indentSize = $depth * $spacesCount;
         $bracketIndent = str_repeat($replacer, $indentSize - $spacesCount);
+        $currentIndent = str_repeat($replacer, $indentSize);
         $lines = array_reduce(
             array_keys($currentTree),
-            function ($acc, $key) use ($currentTree, $spacesCount, $replacer, $indentSize, $depth, $iter) {
-                $existsInCurrentTree = isset($currentTree[$key]);
-                $indent = $existsInCurrentTree && is_array($currentTree[$key])
-                && array_key_exists('flag', $currentTree[$key])
-                    ? str_repeat($replacer, $indentSize - 2) . $currentTree[$key]['flag'] . ' '
-                    : str_repeat($replacer, $indentSize);
+            function ($acc, $key) use ($currentTree, $currentIndent, $depth, $iter) {
 
-                if (!$existsInCurrentTree || !is_array($currentTree[$key])) {
-                    $acc .= $indent . $key . ': ' . toString($currentTree[$key]) . "\n";
-                } elseif (!array_key_exists('flag', $currentTree[$key])) {
-                    $acc .= "$indent{$key}: " . $iter($currentTree[$key], $depth + 1) . "\n";
+                $indentWithFlag = (isset($currentTree[$key]['flag']))
+                    ? substr_replace($currentIndent, $currentTree[$key]['flag'], -2, 1)
+                    : $currentIndent;
+                $name = (isset($currentTree[$key]['name'])) ? $currentTree[$key]['name'] : $key;
+
+                if (!isset($currentTree[$key]) || !is_array($currentTree[$key])) {
+                    $value = toString($currentTree[$key]);
+                } elseif (!isset($currentTree[$key]['flag'])) {
+                    $value = $iter($currentTree[$key], $depth + 1);
                 } else {
                     if (is_array($currentTree[$key]['value'])) {
-                        $currentTree[$key]['value'] = $iter($currentTree[$key]['value'], $depth + 1);
+                        $value = $iter($currentTree[$key]['value'], $depth + 1);
+                    } else {
+                        $value = toString($currentTree[$key]['value']);
                     }
-
-                    $value = toString($currentTree[$key]['value']);
-                    if ($value !== '') {
-                        $value = " $value";
-                    }
-
-                    $acc .= "$indent{$currentTree[$key]['name']}:$value\n";
                 }
 
+                if ($value !== '') {
+                    $value = " $value";
+                }
+
+                $acc .= "{$indentWithFlag}{$name}:{$value}\n";
                 return $acc;
             },
             ''
