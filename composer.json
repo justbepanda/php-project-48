@@ -8,7 +8,10 @@
     },
     "files": [
       "src/GenDiff.php",
-      "src/Parsers.php"
+      "src/Parsers.php",
+      "src/Formatters.php",
+      "src/Formatters/Plain.php",
+      "src/Formatters/Stylish.php"
     ]
   },
   "autoload-dev": {

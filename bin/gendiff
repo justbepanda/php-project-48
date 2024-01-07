@@ -31,13 +31,16 @@ Options:
 DOC;
 
 $args = Docopt::handle($doc);
+var_dump($args);
 foreach ($args as $k => $v) {
     echo $k . ': ' . json_encode($v) . PHP_EOL;
 }
 
-if (is_file($args['<firstFile>']) and is_file($args['<secondFile>'])) {
-    $diff = genDiff($args['<firstFile>'], $args['<secondFile>']);
+$file1 = ($args['<firstFile>']) ? $args['<firstFile>'] : null;
+$file2 = ($args['<secondFile>']) ? $args['<secondFile>'] : null;
+$format = ($args['--format']) ? $args['--format'] : "stylish";
+
+if ($file1 && $file2) {
+    $diff = genDiff($file1, $file2, $format);
     print_r($diff);
-} else {
-    print_r("Error: The files are listed incorrectly\n");
 }
