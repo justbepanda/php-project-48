@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\Formatters\Stylish\formatStylish;
 use function Differ\Differ\Formatters\Plain\formatPlain;
+use function Differ\Differ\Formatters\Json\formatJson;
 
 class FormattersTest extends TestCase
 {
@@ -318,5 +319,138 @@ class FormattersTest extends TestCase
         ];
         $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-plain.txt'));
         $this->assertEquals($expected, formatPlain($data));
+    }
+
+    public function testFormatJsonTree(): void
+    {
+        $data = [
+            [
+                "name" => "common",
+                "flag" => " ",
+                "value" => [
+                    [
+                        "name" => "follow",
+                        "flag" => "+",
+                        "value" => false
+                    ],
+                    [
+                        "name" => "setting1",
+                        "flag" => " ",
+                        "value" => "Value 1",
+                    ],
+                    ["name" => "setting2",
+                        "flag" => "-",
+                        "value" => 200,
+                    ],
+                    ["name" => "setting3",
+                        "flag" => "-",
+                        "value" => true,
+                    ],
+                    ["name" => "setting3",
+                        "flag" => "+",
+                        "value" => null,
+                    ],
+                    [
+                        "name" => "setting4",
+                        "flag" => "+",
+                        "value" => "blah blah",
+                    ],
+                    [
+                        "name" => "setting5",
+                        "flag" => "+",
+                        "value" => [
+                            "key5" => "value5"
+                        ],
+                    ],
+                    [
+                        "name" => "setting6",
+                        "flag" => " ",
+                        "value" => [
+                            [
+                                "name" => "doge",
+                                "flag" => " ",
+                                "value" => [
+                                    [
+                                        "name" => "wow",
+                                        "flag" => "-",
+                                        "value" => "",
+                                    ],
+                                    [
+                                        "name" => "wow",
+                                        "flag" => "+",
+                                        "value" => "so much",
+                                    ],
+                                ],
+                            ],
+                            [
+                                "name" => "key",
+                                "flag" => " ",
+                                "value" => "value",
+                            ],
+                            ["name" => "ops",
+                                "flag" => "+",
+                                "value" => "vops",
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "name" => "group1",
+                "flag" => " ",
+                "value" => [
+                    [
+                        "name" => "baz",
+                        "flag" => "-",
+                        "value" => "bas",
+                    ],
+                    [
+                        "name" => "baz",
+                        "flag" => "+",
+                        "value" => "bars",
+                    ],
+                    [
+                        "name" => "foo",
+                        "flag" => " ",
+                        "value" => "bar",
+                    ],
+                    [
+                        "name" => "nest",
+                        "flag" => "-",
+                        "value" => [
+                            "key" => "value"
+                        ]
+                    ],
+                    ["name" => "nest",
+                        "flag" => "+",
+                        "value" => "str"
+                    ]
+                ]
+            ],
+            [
+                "name" => "group2",
+                "flag" => "-",
+                "value" => [
+                    "abc" => 12345,
+                    "deep" => [
+                        "id" => 45
+                    ]
+                ]
+            ],
+            [
+                "name" => "group3",
+                "flag" => "+",
+                "value" => [
+                    "deep" => [
+                        "id" => [
+                            "number" => 45
+                        ]
+                    ],
+                    "fee" => 100500
+                ]
+            ]
+        ];
+        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-json.json'));
+        $this->assertEquals($expected, formatJson($data));
     }
 }

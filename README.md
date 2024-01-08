@@ -9,3 +9,6 @@
 
 ### Asciinema Demo Plain:
 [![asciicast](https://asciinema.org/a/igJvONFkmWk6LqVvc6pro3jqO.svg)](https://asciinema.org/a/igJvONFkmWk6LqVvc6pro3jqO)
+
+### Asciinema Demo Json:
+[![asciicast](https://asciinema.org/a/0MkfkN7TQOOdn7xuSPmaIDvdF.svg)](https://asciinema.org/a/0MkfkN7TQOOdn7xuSPmaIDvdF)
