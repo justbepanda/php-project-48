@@ -32,11 +32,7 @@ function formatStylish($data, $replacer = ' ', $spacesCount = 4)
                     }
                 }
 
-                if ($value !== '') {
-                    $value = " $value";
-                }
-
-                $acc .= "{$indentWithFlag}{$name}:{$value}\n";
+                $acc .= "{$indentWithFlag}{$name}: {$value}\n";
                 return $acc;
             },
             ''
