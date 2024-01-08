@@ -40,6 +40,5 @@ function formatPlain($data, $currentPath = '')
         }
         return $acc;
     }, []);
-   
     return implode("\n", $result);
 }
