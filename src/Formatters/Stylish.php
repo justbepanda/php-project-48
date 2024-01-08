@@ -39,6 +39,6 @@ function formatStylish($data, $replacer = ' ', $spacesCount = 4)
         );
         return "{\n{$lines}{$bracketIndent}}";
     };
-    $result = $iter($data, 1) . "\n";
+    $result = $iter($data, 1);
     return $result;
 }
