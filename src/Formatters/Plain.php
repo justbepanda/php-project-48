@@ -10,6 +10,7 @@ function replaceQuotes($text)
 function formatPlain($data, $currentPath = '')
 {
     $result = array_reduce(array_keys($data), function ($acc, $key) use ($data, $currentPath) {
+
         $node = $data[$key];
         if ($currentPath !== '') {
             $currentPath .= '.';
@@ -17,7 +18,7 @@ function formatPlain($data, $currentPath = '')
         $name = $currentPath . $node['name'];
 
         if (isset($node['value'][0]['name'])) {
-            $acc .= formatPlain($node['value'], $name);
+            $acc[] = formatPlain($node['value'], $name);
             return $acc;
         }
 
@@ -27,17 +28,18 @@ function formatPlain($data, $currentPath = '')
                 $oldValue = (is_array($data[$key - 1]['value']))
                     ? '[complex value]'
                     : replaceQuotes(json_encode($data[$key - 1]['value']));
-                $acc .= "Property '{$name}' was updated. From {$oldValue} to {$newValue}\n";
+                $acc[] = "Property '{$name}' was updated. From {$oldValue} to {$newValue}";
             } else {
                 $value = (is_array($node['value'])) ? '[complex value]' : replaceQuotes(json_encode($node['value']));
-                $acc .= "Property '{$name}' was added with value: {$value}\n";
+                $acc[] = "Property '{$name}' was added with value: {$value}";
             }
         } elseif (isset($node['flag']) && $node['flag'] === '-') {
             if (!(isset($data[$key + 1]['name']) && ($data[$key + 1]['name'] === $data[$key]['name']))) {
-                $acc .= "Property '{$name}' was removed\n";
+                $acc[] = "Property '{$name}' was removed";
             }
         }
         return $acc;
-    }, '');
-    return $result;
+    }, []);
+   
+    return implode("\n", $result);
 }
