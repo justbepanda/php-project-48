@@ -151,6 +151,5 @@ class FormattersTest extends TestCase
     {
         $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-json.json'));
         $this->assertEquals($expected, formatJson($this->sourceData));
-
     }
 }
