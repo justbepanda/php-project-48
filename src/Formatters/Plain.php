@@ -2,43 +2,64 @@
 
 namespace Differ\Differ\Formatters\Plain;
 
-function replaceQuotes($text)
+use function Functional\flatten;
+
+function normalizeValue($text): string
 {
-    return str_replace('"', '\'', preg_replace('/((^|\s)"(\w))/um', '\2\'\3', $text));
+    $str = json_encode($text);
+    //замена кавычек
+    return str_replace('"', '\'', preg_replace('/((^|\s)"(\w))/um', '\2\'\3', $str));
 }
 
-function formatPlain($data, $currentPath = '')
+function formatPlain($data)
 {
-    $result = array_reduce(array_keys($data), function ($acc, $key) use ($data, $currentPath) {
+    $iter = function ($data, $currentPath = '') use (&$iter) {
+        return array_reduce(array_keys($data), function ($acc, $key) use ($iter, $data, $currentPath) {
 
-        $node = $data[$key];
-        if ($currentPath !== '') {
-            $currentPath .= '.';
-        }
-        $name = $currentPath . $node['name'];
+            if ($currentPath !== '') {
+                $currentPath .= '.';
+            }
+            $node = $data[$key];
+            $flag = $node['flag'] ?? null;
+            $children = $node['children'] ?? null;
+            $name = ($node['name']) ?: $key;
+            $name = $currentPath . $name;
 
-        if (isset($node['value'][0]['name'])) {
-            $acc[] = formatPlain($node['value'], $name);
-            return $acc;
-        }
+            if ($flag === 'updated') {
+                if ($children) {
+                    $acc[] = $iter($node['children'], $name);
+                } else {
+                    if (is_array($node['valueBefore'])) {
+                        $valueBefore = '[complex value]';
+                    } else {
+                        $valueBefore = normalizeValue($node['valueBefore']);
+                    }
 
-        if (isset($node['flag']) && $node['flag'] === '+') {
-            if (isset($data[$key - 1]['name']) && ($data[$key - 1]['name'] === $data[$key]['name'])) {
-                $newValue = (is_array($node['value'])) ? '[complex value]' : replaceQuotes(json_encode($node['value']));
-                $oldValue = (is_array($data[$key - 1]['value']))
-                    ? '[complex value]'
-                    : replaceQuotes(json_encode($data[$key - 1]['value']));
-                $acc[] = "Property '{$name}' was updated. From {$oldValue} to {$newValue}";
-            } else {
-                $value = (is_array($node['value'])) ? '[complex value]' : replaceQuotes(json_encode($node['value']));
+                    if (is_array($node['valueAfter'])) {
+                        $valueAfter = '[complex value]';
+                    } else {
+                        $valueAfter = normalizeValue($node['valueAfter']);
+                    }
+
+                    $acc[] = "Property '{$name}' was updated. From {$valueBefore} to {$valueAfter}";
+                }
+            }
+            if ($flag === 'added') {
+                if (is_array($node['value'])) {
+                    $value = '[complex value]';
+                } else {
+                    $value = normalizeValue($node['value']);
+                }
                 $acc[] = "Property '{$name}' was added with value: {$value}";
             }
-        } elseif (isset($node['flag']) && $node['flag'] === '-') {
-            if (!(isset($data[$key + 1]['name']) && ($data[$key + 1]['name'] === $data[$key]['name']))) {
+
+            if ($flag === 'removed') {
                 $acc[] = "Property '{$name}' was removed";
             }
-        }
-        return $acc;
-    }, []);
+
+            return $acc;
+        }, []);
+    };
+    $result = flatten($iter($data));
     return implode("\n", $result);
 }

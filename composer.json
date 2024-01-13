@@ -3,7 +3,6 @@
   "description": "hexlet project",
   "autoload": {
     "psr-4": {
-      "Hexlet\\Code\\": "src/",
       "Differ\\Differ\\": "src/"
     },
     "files": [
@@ -17,7 +16,6 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Hexlet\\Code\\": "src",
       "Differ\\Differ\\": "src"
     }
   },

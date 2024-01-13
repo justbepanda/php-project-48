@@ -23,12 +23,3 @@ function formatData($data, $formatter)
     }
     return $formattedData;
 }
-
-function toString($value)
-{
-    $result = trim(var_export($value, true), "'");
-    if ($result === 'NULL') {
-        $result = 'null';
-    }
-    return $result;
-}

@@ -48,37 +48,63 @@ function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
             return false;
     }
 
-    $diff = getDiff($parsedData1, $parsedData2);
+    $diff = compareData($parsedData1, $parsedData2);
 
     $formattedData = formatData($diff, $formatter);
 
     return $formattedData;
 }
 
-function getDiff($data1, $data2)
-{
-    $keys = array_unique([...array_keys($data1), ...array_keys($data2)]);
-    sort($keys);
 
-    $result = array_reduce($keys, function ($acc, $key) use ($data1, $data2) {
-        $flag = ' ';
-        if (!array_key_exists($key, $data1)) {
-            $flag = '+';
-            $value = $data2[$key];
-        } elseif (!array_key_exists($key, $data2)) {
-            $flag = '-';
-            $value = $data1[$key];
-        } elseif (is_array($data1[$key]) && is_array($data2[$key])) {
-            $value = getDiff($data1[$key], $data2[$key]);
-        } elseif ($data1[$key] === $data2[$key]) {
-            $value = $data1[$key];
+function compareData($data1, $data2)
+{
+    $removedDataKeys = array_filter(array_keys($data1), fn($key) => !array_key_exists($key, $data2));
+    $addedDataKeys = array_filter(array_keys($data2), fn($key) => !array_key_exists($key, $data1));
+    $updatedDataKeys = array_filter(array_keys($data1), fn($key) =>
+        array_key_exists($key, $data1) && array_key_exists($key, $data2) && $data1[$key] !== $data2[$key]);
+    $equalDataKeys = array_filter(array_keys($data1), fn($key) =>
+        array_key_exists($key, $data1) && array_key_exists($key, $data2) && $data1[$key] === $data2[$key]);
+
+    $formatRemovedData = array_map(fn($key) => [
+        "name" => $key,
+        "flag" => "removed",
+        "value" => $data1[$key],
+    ], $removedDataKeys);
+
+    $formatAddedData = array_map(fn($key) => [
+        "name" => $key,
+        "flag" => "added",
+        "value" => $data2[$key],
+    ], $addedDataKeys);
+
+    $formatEqualData = array_map(fn($key) => [
+        "name" => $key,
+        "flag" => "equal",
+        "value" => $data1[$key],
+    ], $equalDataKeys);
+
+    $updatedDataKeys = array_map(function ($key) use ($data1, $data2) {
+        if (is_array($data1[$key]) && is_array($data2[$key])) {
+            return [
+                "name" => $key,
+                "flag" => "updated",
+                "children" => compareData($data1[$key], $data2[$key]),
+            ];
         } else {
-            $acc[] = ['name' => $key, 'flag' => '-', 'value' => $data1[$key]];
-            $flag = '+';
-            $value = $data2[$key];
+            return [
+                "name" => $key,
+                "flag" => "updated",
+                "valueBefore" => $data1[$key],
+                "valueAfter" => $data2[$key],
+            ];
         }
-        $acc[] = ['name' => $key, 'flag' => $flag, 'value' => $value];
-        return $acc;
-    }, []);
-    return $result;
+    }, $updatedDataKeys);
+
+    $comparedData = [...$formatRemovedData, ...$formatAddedData, ...$formatEqualData, ...$updatedDataKeys];
+
+    usort($comparedData, function ($item1, $item2) {
+        return $item1['name'] <=> $item2['name'];
+    });
+
+    return $comparedData;
 }

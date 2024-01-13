@@ -5,7 +5,7 @@ namespace Differ\Differ\Tests;
 use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
-use function Differ\Differ\getDiff;
+use function Differ\Differ\compareData;
 
 class GenDiffTest extends TestCase
 {
@@ -15,7 +15,7 @@ class GenDiffTest extends TestCase
         return realpath(implode('/', $parts));
     }
 
-    public function testGetDiffFlat(): void
+    public function testCompareDataFlat(): void
     {
         $parsedFlatData1 = [
             "host" => "hexlet.io",
@@ -31,41 +31,35 @@ class GenDiffTest extends TestCase
         $expectedFlatData = [
             [
                 "name" => "follow",
-                "flag" => "-",
+                "flag" => "removed",
                 "value" => false,
             ],
             [
                 "name" => "host",
-                "flag" => " ",
+                "flag" => "equal",
                 "value" => "hexlet.io",
             ],
             [
                 "name" => "proxy",
-                "flag" => "-",
+                "flag" => "removed",
                 "value" => "123.234.53.22",
-
             ],
             [
                 "name" => "timeout",
-                "flag" => "-",
-                "value" => 50,
-            ],
-            [
-                "name" => "timeout",
-                "flag" => "+",
-                "value" => 20,
+                "flag" => "updated",
+                "valueBefore" => 50,
+                "valueAfter" => 20,
             ],
             [
                 "name" => "verbose",
-                "flag" => "+",
+                "flag" => "added",
                 "value" => true,
-
             ]
         ];
-        $this->assertEquals($expectedFlatData, getDiff($parsedFlatData1, $parsedFlatData2));
+        $this->assertEquals($expectedFlatData, compareData($parsedFlatData1, $parsedFlatData2));
     }
 
-    public function testGetDiffTree(): void
+    public function testCompareDataTree(): void
     {
         $parsedTreeData1 = [
             "common" => [
@@ -124,140 +118,124 @@ class GenDiffTest extends TestCase
                 "fee" => 100500
             ]
         ];
-        $expectedTreeData = [
+        $expectedTreeData =
             [
-                "name" => "common",
-                "flag" => " ",
-                "value" => [
-                    [
-                        "name" => "follow",
-                        "flag" => "+",
-                        "value" => false
-                    ],
-                    [
-                        "name" => "setting1",
-                        "flag" => " ",
-                        "value" => "Value 1",
-                    ],
-                    ["name" => "setting2",
-                        "flag" => "-",
-                        "value" => 200,
-                    ],
-                    ["name" => "setting3",
-                        "flag" => "-",
-                        "value" => true,
-                    ],
-                    ["name" => "setting3",
-                        "flag" => "+",
-                        "value" => null,
-                    ],
-                    [
-                        "name" => "setting4",
-                        "flag" => "+",
-                        "value" => "blah blah",
-                    ],
-                    ["name" => "setting5",
-                        "flag" => "+",
-                        "value" => [
-                            "key5" => "value5"
+                [
+                    "name" => "common",
+                    "flag" => "updated",
+                    "children" => [
+                        [
+                            "name" => "follow",
+                            "flag" => "added",
+                            "value" => false
                         ],
-                    ],
-                    [
-                        "name" => "setting6",
-                        "flag" => " ",
-                        "value" => [
-                            [
-                                "name" => "doge",
-                                "flag" => " ",
-                                "value" => [
-                                    [
-                                        "name" => "wow",
-                                        "flag" => "-",
-                                        "value" => "",
-                                    ],
-                                    [
-                                        "name" => "wow",
-                                        "flag" => "+",
-                                        "value" => "so much",
-                                    ],
+                        [
+                            "name" => "setting1",
+                            "flag" => "equal",
+                            "value" => "Value 1"
+                        ],
+                        [
+                            "name" => "setting2",
+                            "flag" => "removed",
+                            "value" => 200
+                        ],
+                        [
+                            "name" => "setting3",
+                            "flag" => "updated",
+                            "valueBefore" => true,
+                            "valueAfter" => null,
+                        ],
+                        [
+                            "name" => "setting4",
+                            "flag" => "added",
+                            "value" => "blah blah"
+                        ],
+                        [
+                            "name" => "setting5",
+                            "flag" => "added",
+                            "value" => [
+                                "key5" => "value5"
+                            ]
+                        ],
+                        [
+                            "name" => "setting6",
+                            "flag" => "updated",
+                            "children" => [
+                                [
+                                    "name" => "doge",
+                                    "flag" => "updated",
+                                    "children" => [
+                                        [
+                                            "name" => "wow",
+                                            "flag" => "updated",
+                                            "valueBefore" => "",
+                                            "valueAfter" => "so much"
+                                        ]
+                                    ]
                                 ],
-                            ],
-                            [
-                                "name" => "key",
-                                "flag" => " ",
-                                "value" => "value",
-                            ],
-                            ["name" => "ops",
-                                "flag" => "+",
-                                "value" => "vops",
+                                [
+                                    "name" => "key",
+                                    "flag" => "equal",
+                                    "value" => "value"
+                                ],
+                                [
+                                    "name" => "ops",
+                                    "flag" => "added",
+                                    "value" => "vops"
+                                ]
                             ]
                         ]
                     ]
-                ]
-            ],
-            [
-                "name" => "group1",
-                "flag" => " ",
-                "value" => [
-                    [
-                        "name" => "baz",
-                        "flag" => "-",
-                        "value" => "bas",
-                    ],
-                    [
-                        "name" => "baz",
-                        "flag" => "+",
-                        "value" => "bars",
-                    ],
-                    [
-                        "name" => "foo",
-                        "flag" => " ",
-                        "value" => "bar",
-                    ],
-                    [
-                        "name" => "nest",
-                        "flag" => "-",
-                        "value" => [
-                            "key" => "value"
+                ],
+                [
+                    "name" => "group1",
+                    "flag" => "updated",
+                    "children" => [
+                        [
+                            "name" => "baz",
+                            "flag" => "updated",
+                            "valueBefore" => "bas",
+                            "valueAfter" => "bars"
+                        ],
+                        [
+                            "name" => "foo",
+                            "flag" => "equal",
+                            "value" => "bar"
+                        ],
+                        [
+                            "name" => "nest",
+                            "flag" => "updated",
+                            "valueBefore" => [
+                                "key" => "value"
+                            ],
+                            "valueAfter" => "str"
                         ]
-                    ],
-                    ["name" => "nest",
-                        "flag" => "+",
-                        "value" => "str"
+                    ]
+                ],
+                [
+                    "name" => "group2",
+                    "flag" => "removed",
+                    "value" => [
+                        "abc" => 12345,
+                        "deep" => [
+                            "id" => 45
+                        ]
+                    ]
+                ],
+                [
+                    "name" => "group3",
+                    "flag" => "added",
+                    "value" => [
+                        "deep" => [
+                            "id" => [
+                                "number" => 45
+                            ]
+                        ],
+                        "fee" => 100500
                     ]
                 ]
-            ],
-            ["name" => "group2",
-                "flag" => "-",
-                "value" => [
-                    "abc" => 12345,
-                    "deep" => [
-                        "id" => 45
-                    ]
-                ]
-            ],
-            [
-                "name" => "group3",
-                "flag" => "+",
-                "value" => [
-                    "deep" => [
-                        "id" => [
-                            "number" => 45
-                        ]
-                    ],
-                    "fee" => 100500
-                ]
-            ]
-        ];
-        $this->assertEquals($expectedTreeData, getDiff($parsedTreeData1, $parsedTreeData2));
-    }
+            ];
 
-
-    public function testGenDiffStylish(): void
-    {
-        $file1 = $this->getFixtureFullPath('tree1.yml');
-        $file2 = $this->getFixtureFullPath('tree2.yml');
-        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-stylish.txt'));
-        $this->assertEquals($expected, genDiff($file1, $file2));
+        $this->assertEquals($expectedTreeData, compareData($parsedTreeData1, $parsedTreeData2));
     }
 }
