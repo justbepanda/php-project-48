@@ -147,10 +147,10 @@ class FormattersTest extends TestCase
         $this->assertEquals($expected, formatPlain($this->sourceData));
     }
 
-//    public function testFormatJsonTree(): void
-//    {
-//        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-json.json'));
-//        $this->assertEquals($expected, formatJson($this->sourceData));
-//
-//    }
+    public function testFormatJsonTree(): void
+    {
+        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-json.json'));
+        $this->assertEquals($expected, formatJson($this->sourceData));
+
+    }
 }

@@ -10,9 +10,6 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
-//require_once __DIR__ . '/../vendor/docopt/docopt/src/docopt.php';
-//require_once __DIR__ . '/../src/genDiff.php';
-
 use function Differ\Differ\genDiff;
 
 $doc = <<<DOC
@@ -36,11 +33,11 @@ foreach ($args as $k => $v) {
     echo $k . ': ' . json_encode($v) . PHP_EOL;
 }
 
-$file1 = ($args['<firstFile>']) ? $args['<firstFile>'] : null;
-$file2 = ($args['<secondFile>']) ? $args['<secondFile>'] : null;
+$file1Path = ($args['<firstFile>']) ? $args['<firstFile>'] : null;
+$file2Path = ($args['<secondFile>']) ? $args['<secondFile>'] : null;
 $format = ($args['--format']) ? $args['--format'] : "stylish";
 
-if ($file1 && $file2) {
-    $diff = genDiff($file1, $file2, $format);
+if ($file1Path && $file2Path) {
+    $diff = genDiff($file1Path, $file2Path, $format);
     print_r($diff);
 }

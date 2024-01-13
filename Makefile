@@ -25,6 +25,3 @@ test-coverage-html:
 
 validate:
 	composer validate
-
-gendiff:
-	./bin/gendiff

@@ -18,6 +18,8 @@ use function Differ\Differ\Parsers\parseJson;
 use function Differ\Differ\Parsers\parseYaml;
 use function Differ\Differ\Formatters\formatData;
 
+
+
 function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
 {
     // Получить содержимое файлов
@@ -55,35 +57,36 @@ function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
     return $formattedData;
 }
 
-
-function compareData($data1, $data2)
+function formatRemoved($data, $keys): array
 {
-    $removedDataKeys = array_filter(array_keys($data1), fn($key) => !array_key_exists($key, $data2));
-    $addedDataKeys = array_filter(array_keys($data2), fn($key) => !array_key_exists($key, $data1));
-    $updatedDataKeys = array_filter(array_keys($data1), fn($key) =>
-        array_key_exists($key, $data1) && array_key_exists($key, $data2) && $data1[$key] !== $data2[$key]);
-    $equalDataKeys = array_filter(array_keys($data1), fn($key) =>
-        array_key_exists($key, $data1) && array_key_exists($key, $data2) && $data1[$key] === $data2[$key]);
-
-    $formatRemovedData = array_map(fn($key) => [
+    return array_map(fn($key) => [
         "name" => $key,
         "flag" => "removed",
-        "value" => $data1[$key],
-    ], $removedDataKeys);
+        "value" => $data[$key],
+    ], $keys);
+}
 
-    $formatAddedData = array_map(fn($key) => [
+function formatAdded($data, $keys): array
+{
+    return array_map(fn($key) => [
         "name" => $key,
         "flag" => "added",
-        "value" => $data2[$key],
-    ], $addedDataKeys);
+        "value" => $data[$key],
+    ], $keys);
+}
 
-    $formatEqualData = array_map(fn($key) => [
+function formatEqual($data, $keys): array
+{
+    return array_map(fn($key) => [
         "name" => $key,
         "flag" => "equal",
-        "value" => $data1[$key],
-    ], $equalDataKeys);
+        "value" => $data[$key],
+    ], $keys);
+}
 
-    $updatedDataKeys = array_map(function ($key) use ($data1, $data2) {
+function formatUpdated($data1, $data2, $keys): array
+{
+    return array_map(function ($key) use ($data1, $data2) {
         if (is_array($data1[$key]) && is_array($data2[$key])) {
             return [
                 "name" => $key,
@@ -98,9 +101,24 @@ function compareData($data1, $data2)
                 "valueAfter" => $data2[$key],
             ];
         }
-    }, $updatedDataKeys);
+    }, $keys);
+}
 
-    $comparedData = [...$formatRemovedData, ...$formatAddedData, ...$formatEqualData, ...$updatedDataKeys];
+function compareData($data1, $data2): array
+{
+    $removedKeys = array_filter(array_keys($data1), fn($key) => !array_key_exists($key, $data2));
+    $addedKeys = array_filter(array_keys($data2), fn($key) => !array_key_exists($key, $data1));
+    $updatedKeys = array_filter(array_keys($data1), fn($key) => array_key_exists($key, $data1) &&
+        array_key_exists($key, $data2) && $data1[$key] !== $data2[$key]);
+    $equalKeys = array_filter(array_keys($data1), fn($key) => array_key_exists($key, $data1) &&
+        array_key_exists($key, $data2) && $data1[$key] === $data2[$key]);
+
+    $removedData = formatRemoved($data1, $removedKeys);
+    $addedData = formatAdded($data2, $addedKeys);
+    $updatedData = formatUpdated($data1, $data2, $updatedKeys);
+    $equalData = formatEqual($data1, $equalKeys);
+
+    $comparedData = [...$removedData, ...$addedData, ...$updatedData, ...$equalData];
 
     usort($comparedData, function ($item1, $item2) {
         return $item1['name'] <=> $item2['name'];
