@@ -4,9 +4,11 @@ namespace Differ\Differ\Formatters\Stylish;
 
 function toString(mixed $value): string
 {
-    $result = trim(var_export($value, true), "'");
-    if ($result === 'NULL') {
+    $value = trim(var_export($value, true), "'");
+    if ($value === 'NULL') {
         $result = 'null';
+    } else {
+        $result = $value;
     }
     return $result;
 }
