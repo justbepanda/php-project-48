@@ -4,17 +4,10 @@ namespace Differ\Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Differ\Differ\genDiff;
 use function Differ\Differ\compareData;
 
 class GenDiffTest extends TestCase
 {
-    public function getFixtureFullPath($fixtureName)
-    {
-        $parts = [__DIR__, 'fixtures', $fixtureName];
-        return realpath(implode('/', $parts));
-    }
-
     public function testCompareDataFlat(): void
     {
         $parsedFlatData1 = [

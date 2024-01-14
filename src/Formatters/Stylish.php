@@ -2,7 +2,7 @@
 
 namespace Differ\Differ\Formatters\Stylish;
 
-function toString($value)
+function toString(mixed $value): string
 {
     $result = trim(var_export($value, true), "'");
     if ($result === 'NULL') {
@@ -12,7 +12,7 @@ function toString($value)
 }
 
 
-function formatStylish($data, $replacer = ' ', $spacesCount = 4)
+function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4): string
 {
 
     $iter = function ($currentTree, $depth) use (&$iter, $spacesCount, $replacer) {

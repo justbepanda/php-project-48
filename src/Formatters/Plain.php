@@ -4,14 +4,17 @@ namespace Differ\Differ\Formatters\Plain;
 
 use function Functional\flatten;
 
-function normalizeValue($text): string
+function normalizeValue(mixed $text): string|false
 {
     $str = json_encode($text);
     //замена кавычек
-    return str_replace('"', '\'', preg_replace('/((^|\s)"(\w))/um', '\2\'\3', $str));
+    if (isset($str[0]) && isset($str[1]) && $str[0] === '"' && $str[-1] === '"') {
+        $str = "'" . substr($str, 1, -1) . "'";
+    }
+    return $str;
 }
 
-function formatPlain($data)
+function formatPlain(array $data): string
 {
     $iter = function ($data, $currentPath = '') use (&$iter) {
         return array_reduce(array_keys($data), function ($acc, $key) use ($iter, $data, $currentPath) {

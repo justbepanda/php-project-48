@@ -10,7 +10,7 @@ use function Differ\Differ\Formatters\Json\formatJson;
 
 class FormattersTest extends TestCase
 {
-    public $sourceData =
+    public array $sourceData =
         [
             [
                 "name" => "common",
@@ -129,27 +129,21 @@ class FormattersTest extends TestCase
         ];
 
 
-    public function getFixtureFullPath($fixtureName)
-    {
-        $parts = [__DIR__, 'fixtures', $fixtureName];
-        return realpath(implode('/', $parts));
-    }
-
     public function testFormatStylishTree(): void
     {
-        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-stylish.txt'));
+        $expected = file_get_contents(__DIR__ . "/fixtures/expected-gendiff-tree-stylish.txt");
         $this->assertEquals($expected, formatStylish($this->sourceData));
     }
 
     public function testFormatPlainTree(): void
     {
-        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-plain.txt'));
+        $expected = file_get_contents(__DIR__ . "/fixtures/expected-gendiff-tree-plain.txt");
         $this->assertEquals($expected, formatPlain($this->sourceData));
     }
 
     public function testFormatJsonTree(): void
     {
-        $expected = file_get_contents($this->getFixtureFullPath('expected-gendiff-tree-json.json'));
+        $expected = file_get_contents(__DIR__ . "/fixtures/expected-gendiff-tree-json.json");
         $this->assertEquals($expected, formatJson($this->sourceData));
     }
 }

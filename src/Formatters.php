@@ -6,7 +6,7 @@ use function Differ\Differ\Formatters\Stylish\formatStylish;
 use function Differ\Differ\Formatters\Plain\formatPlain;
 use function Differ\Differ\Formatters\Json\formatJson;
 
-function formatData($data, $formatter)
+function formatData(array $data, string $formatter): string|bool
 {
     switch ($formatter) {
         case 'stylish':
@@ -19,7 +19,7 @@ function formatData($data, $formatter)
             $formattedData = formatJson($data);
             break;
         default:
-            return "Неизвестный форматтер: $formatter";
+            return false;
     }
     return $formattedData;
 }

@@ -18,13 +18,15 @@ use function Differ\Differ\Parsers\parseJson;
 use function Differ\Differ\Parsers\parseYaml;
 use function Differ\Differ\Formatters\formatData;
 
-
-
-function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
+function genDiff(string $pathToFile1, string $pathToFile2, string $formatter = "stylish"): bool|string
 {
     // Получить содержимое файлов
     $content1 = file_get_contents($pathToFile1);
     $content2 = file_get_contents($pathToFile2);
+
+    if (!$content1 || !$content2) {
+        return false;
+    }
 
     // Получить расширения файлов
     $extension1 = pathinfo($pathToFile1, PATHINFO_EXTENSION);
@@ -57,7 +59,7 @@ function genDiff($pathToFile1, $pathToFile2, $formatter = "stylish")
     return $formattedData;
 }
 
-function formatRemoved($data, $keys): array
+function formatRemoved(array $data, array $keys): array
 {
     return array_map(fn($key) => [
         "name" => $key,
@@ -66,7 +68,7 @@ function formatRemoved($data, $keys): array
     ], $keys);
 }
 
-function formatAdded($data, $keys): array
+function formatAdded(array $data, array $keys): array
 {
     return array_map(fn($key) => [
         "name" => $key,
@@ -75,7 +77,7 @@ function formatAdded($data, $keys): array
     ], $keys);
 }
 
-function formatEqual($data, $keys): array
+function formatEqual(array $data, array $keys): array
 {
     return array_map(fn($key) => [
         "name" => $key,
@@ -84,7 +86,7 @@ function formatEqual($data, $keys): array
     ], $keys);
 }
 
-function formatUpdated($data1, $data2, $keys): array
+function formatUpdated(array $data1, array $data2, array $keys): array
 {
     return array_map(function ($key) use ($data1, $data2) {
         if (is_array($data1[$key]) && is_array($data2[$key])) {
@@ -104,7 +106,7 @@ function formatUpdated($data1, $data2, $keys): array
     }, $keys);
 }
 
-function compareData($data1, $data2): array
+function compareData(array $data1, array $data2): array
 {
     $removedKeys = array_filter(array_keys($data1), fn($key) => !array_key_exists($key, $data2));
     $addedKeys = array_filter(array_keys($data2), fn($key) => !array_key_exists($key, $data1));

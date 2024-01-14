@@ -16,23 +16,27 @@ if (file_exists($autoloadPath1)) {
 
 use Symfony\Component\Yaml\Yaml;
 
-
-function parseJson($data)
+function parseJson(string $data): array
 {
-
     return json_decode($data, true);
 }
 
-function parseYaml($data)
+function parseYaml(string $data): array
 {
     return objectToArray(Yaml::parse($data, Yaml::PARSE_OBJECT_FOR_MAP));
 }
 
-function objectToArray($data): array
+function objectToArray(object $data): array
 {
-    $result = [];
-    foreach ($data as $key => $value) {
-        $result[$key] = (is_array($value) || is_object($value)) ? objectToArray($value) : $value;
-    }
+    $data = (array)$data;
+    $result = array_reduce(array_keys($data), function ($acc, $key) use ($data) {
+        $value = $data[$key];
+        if (is_object($value)) {
+            $acc[$key] = objectToArray($value);
+        } else {
+            $acc[$key] = $value;
+        }
+        return $acc;
+    }, []);
     return $result;
 }

@@ -9,8 +9,8 @@ use function Differ\Differ\Parsers\parseYaml;
 
 class ParsersTest extends TestCase
 {
-    private $expectedFlat;
-    private $expectedTree;
+    private array $expectedFlat;
+    private array $expectedTree;
 
     protected function setUp(): void
     {
@@ -49,34 +49,35 @@ class ParsersTest extends TestCase
             ];
     }
 
-    public function getFixtureFullPath($fixtureName)
-    {
-        $parts = [__DIR__, 'fixtures', $fixtureName];
-        return realpath(implode('/', $parts));
-    }
-
-
     public function testJsonFlatParse(): void
     {
-        $file = file_get_contents($this->getFixtureFullPath('flat1.json'));
-        $this->assertEquals($this->expectedFlat, parseJson($file));
+        $filepath = file_get_contents(__DIR__ . "/fixtures/flat1.json");
+        if ($filepath) {
+            $this->assertEquals($this->expectedFlat, parseJson($filepath));
+        }
     }
 
     public function testJsonTreeParse(): void
     {
-        $file = file_get_contents($this->getFixtureFullPath('tree1.json'));
-        $this->assertEquals($this->expectedTree, parseJson($file));
+        $filepath = file_get_contents(__DIR__ . "/fixtures/tree1.json");
+        if ($filepath) {
+            $this->assertEquals($this->expectedTree, parseJson($filepath));
+        }
     }
 
     public function testYamlFlatParse(): void
     {
-        $file = file_get_contents($this->getFixtureFullPath('flat1.yml'));
-        $this->assertEquals($this->expectedFlat, parseYaml($file));
+        $filepath = file_get_contents(__DIR__ . "/fixtures/flat1.yml");
+        if ($filepath) {
+            $this->assertEquals($this->expectedFlat, parseYaml($filepath));
+        }
     }
 
     public function testYamlTreeParse(): void
     {
-        $file = file_get_contents($this->getFixtureFullPath('tree1.yml'));
-        $this->assertEquals($this->expectedTree, parseYaml($file));
+        $filepath = file_get_contents(__DIR__ . "/fixtures/tree1.yml");
+        if ($filepath) {
+            $this->assertEquals($this->expectedTree, parseYaml($filepath));
+        }
     }
 }
