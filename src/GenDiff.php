@@ -2,56 +2,17 @@
 
 namespace Differ\Differ;
 
-// phpcs:disable
-$autoloadPath1 = __DIR__ . '/../../../autoload.php';
-$autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
-
-if (file_exists($autoloadPath1)) {
-    require_once $autoloadPath1;
-} else {
-    require_once $autoloadPath2;
-}
-
-// phpcs:enable
-
-use function Differ\Differ\Parsers\parseJson;
-use function Differ\Differ\Parsers\parseYaml;
+use function Differ\Differ\Parsers\parseFile;
 use function Differ\Differ\Formatters\formatData;
 
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatter = "stylish"): bool|string
 {
     // Получить содержимое файлов
-    $content1 = file_get_contents($pathToFile1);
-    $content2 = file_get_contents($pathToFile2);
-
-    if (!$content1 || !$content2) {
+    $parsedData1 = parseFile($pathToFile1);
+    $parsedData2 = parseFile($pathToFile2);
+    if (!$parsedData1 || !$parsedData2) {
         return false;
     }
-
-    // Получить расширения файлов
-    $extension1 = pathinfo($pathToFile1, PATHINFO_EXTENSION);
-    $extension2 = pathinfo($pathToFile2, PATHINFO_EXTENSION);
-
-    // Проверить, что расширения файлов совпадают
-    if ($extension1 !== $extension2) {
-        return false;
-    }
-
-    // В зависимости от расширения файла, получить содержание в нужном парсере
-    switch ($extension1) {
-        case 'json':
-            $parsedData1 = parseJson($content1);
-            $parsedData2 = parseJson($content2);
-            break;
-        case 'yml':
-        case 'yaml':
-            $parsedData1 = parseYaml($content1);
-            $parsedData2 = parseYaml($content2);
-            break;
-        default:
-            return false;
-    }
-
     $diff = compareData($parsedData1, $parsedData2);
 
     $formattedData = formatData($diff, $formatter);

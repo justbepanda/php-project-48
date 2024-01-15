@@ -19,7 +19,7 @@ function formatPlain(array $data): string
     $iter = function ($data, $currentPath = '') use (&$iter) {
 
         return array_map(function ($key) use ($iter, $data, $currentPath) {
-            
+
             $newPath = empty($currentPath) ? '' : $currentPath . '.';
             $node = $data[$key];
             $flag = $node['flag'] ?? null;
