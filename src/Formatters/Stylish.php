@@ -26,20 +26,17 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                 $item = $currentTree[$key];
 
                 $flag = $item['flag'] ?? null;
-
-                if (!$flag) {
-                    if (is_array($item)) {
-                        return "{$currentIndent}{$key}: {$iter($item, $depth + 1)}\n";
-                    } else {
-                        $value = toString($item);
-                        return "{$currentIndent}{$key}: {$value}\n";
-                    }
-                }
-
                 $children = $item['children'] ?? null;
                 $name = $item['name'] ?? null;
 
-                if ($flag === 'updated') {
+                if (!$flag) {
+                    if (is_array($item)) {
+                        $result = "{$currentIndent}{$key}: {$iter($item, $depth + 1)}\n";
+                    } else {
+                        $value = toString($item);
+                        $result = "{$currentIndent}{$key}: {$value}\n";
+                    }
+                } elseif ($flag === 'updated') {
                     if ($children) {
                         return "{$signIndent}  {$name}: {$iter($children, $depth + 1)}\n";
                     } else {
@@ -55,36 +52,31 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                             $valueAfter = toString($item['valueAfter']);
                         }
 
-                        return "{$signIndent}- {$name}: {$valueBefore}\n{$signIndent}+ {$name}: {$valueAfter}\n";
+                        $result = "{$signIndent}- {$name}: {$valueBefore}\n{$signIndent}+ {$name}: {$valueAfter}\n";
                     }
-                }
-
-                if ($flag === 'removed') {
+                } elseif ($flag === 'removed') {
                     if (is_array($item['value'])) {
                         $value = $iter($item['value'], $depth + 1);
                     } else {
                         $value = toString($item['value']);
                     }
-                    return "{$signIndent}- {$name}: {$value}\n";
-                }
-
-                if ($flag === 'added') {
+                    $result = "{$signIndent}- {$name}: {$value}\n";
+                } elseif ($flag === 'added') {
                     if (is_array($item['value'])) {
                         $value = $iter($item['value'], $depth + 1);
                     } else {
                         $value = toString($item['value']);
                     }
-                    return "{$signIndent}+ {$name}: {$value}\n";
-                }
-
-                if ($flag === 'equal') {
+                    $result = "{$signIndent}+ {$name}: {$value}\n";
+                } else {
                     if (is_array($item['value'])) {
                         $value = $iter($item['value'], $depth + 1);
                     } else {
                         $value = toString($item['value']);
                     }
-                    return "{$signIndent}  {$name}: {$value}\n";
+                    $result = "{$signIndent}  {$name}: {$value}\n";
                 }
+                return $result;
             },
             array_keys($currentTree),
         );
