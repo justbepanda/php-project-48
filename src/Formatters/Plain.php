@@ -19,15 +19,13 @@ function formatPlain(array $data): string
     $iter = function ($data, $currentPath = '') use (&$iter) {
 
         return array_map(function ($key) use ($iter, $data, $currentPath) {
-
-            if ($currentPath !== '') {
-                $currentPath = $currentPath . '.';
-            }
+            
+            $newPath = empty($currentPath) ? '' : $currentPath . '.';
             $node = $data[$key];
             $flag = $node['flag'] ?? null;
             $children = $node['children'] ?? null;
             $name = $node['name'] ? $node['name'] : $key;
-            $property = $currentPath . $name;
+            $property =  $newPath . $name;
 
             if ($flag === 'updated') {
                 if ($children) {

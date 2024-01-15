@@ -4,15 +4,13 @@ namespace Differ\Differ\Formatters\Stylish;
 
 function toString(mixed $value): string
 {
-    $value = trim(var_export($value, true), "'");
-    if ($value === 'NULL') {
-        $result = 'null';
+    $string = trim(var_export($value, true), "'");
+    if ($string === 'NULL') {
+        return 'null';
     } else {
-        $result = $value;
+        return $string;
     }
-    return $result;
 }
-
 
 function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4): string
 {
@@ -23,19 +21,18 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
         $currentIndent = str_repeat($replacer, $indentSize);
         $signIndent = str_repeat($replacer, $indentSize - 2);
 
-        $lines = array_reduce(
-            array_keys($currentTree),
-            function ($acc, $key) use ($currentTree, $currentIndent, $signIndent, $depth, $iter) {
+        $lines = array_map(
+            function ($key) use ($currentTree, $currentIndent, $signIndent, $depth, $iter) {
                 $item = $currentTree[$key];
 
                 $flag = $item['flag'] ?? null;
 
                 if (!$flag) {
                     if (is_array($item)) {
-                        $acc .= "{$currentIndent}{$key}: {$iter($item, $depth + 1)}\n";
+                        return "{$currentIndent}{$key}: {$iter($item, $depth + 1)}\n";
                     } else {
                         $value = toString($item);
-                        $acc .= "{$currentIndent}{$key}: {$value}\n";
+                        return "{$currentIndent}{$key}: {$value}\n";
                     }
                 }
 
@@ -44,7 +41,7 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
 
                 if ($flag === 'updated') {
                     if ($children) {
-                        $acc .= "{$signIndent}  {$name}: {$iter($children, $depth + 1)}\n";
+                        return "{$signIndent}  {$name}: {$iter($children, $depth + 1)}\n";
                     } else {
                         if (is_array($item['valueBefore'])) {
                             $valueBefore = $iter($item['valueBefore'], $depth + 1);
@@ -58,8 +55,7 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                             $valueAfter = toString($item['valueAfter']);
                         }
 
-                        $acc .= "{$signIndent}- {$name}: {$valueBefore}\n";
-                        $acc .= "{$signIndent}+ {$name}: {$valueAfter}\n";
+                        return "{$signIndent}- {$name}: {$valueBefore}\n{$signIndent}+ {$name}: {$valueAfter}\n";
                     }
                 }
 
@@ -69,7 +65,7 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                     } else {
                         $value = toString($item['value']);
                     }
-                    $acc .= "{$signIndent}- {$name}: {$value}\n";
+                    return "{$signIndent}- {$name}: {$value}\n";
                 }
 
                 if ($flag === 'added') {
@@ -78,7 +74,7 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                     } else {
                         $value = toString($item['value']);
                     }
-                    $acc .= "{$signIndent}+ {$name}: {$value}\n";
+                    return "{$signIndent}+ {$name}: {$value}\n";
                 }
 
                 if ($flag === 'equal') {
@@ -87,14 +83,15 @@ function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4
                     } else {
                         $value = toString($item['value']);
                     }
-                    $acc .= "{$signIndent}  {$name}: {$value}\n";
+                    return "{$signIndent}  {$name}: {$value}\n";
                 }
-                return $acc;
             },
-            ''
+            array_keys($currentTree),
         );
-        return "{\n{$lines}{$bracketIndent}}";
+        $string = implode($lines);
+        return "{\n{$string}{$bracketIndent}}";
     };
+
     $result = $iter($data, 1);
     return $result;
 }
