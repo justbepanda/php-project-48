@@ -9,7 +9,7 @@ function normalizeValue(mixed $text): string|false
     $str = json_encode($text);
     //замена кавычек
     if (isset($str[0]) && isset($str[1]) && $str[0] === '"' && $str[-1] === '"') {
-        $str = "'" . substr($str, 1, -1) . "'";
+        return "'" . substr($str, 1, -1) . "'";
     }
     return $str;
 }
