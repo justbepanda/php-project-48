@@ -4,13 +4,14 @@ namespace Differ\Differ;
 
 use function Differ\Differ\Parsers\parseFile;
 use function Differ\Differ\Formatters\formatData;
+use function Functional\sort;
 
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatter = "stylish"): bool|string
 {
     // Получить содержимое файлов
     $parsedData1 = parseFile($pathToFile1);
     $parsedData2 = parseFile($pathToFile2);
-    if (!$parsedData1 || !$parsedData2) {
+    if ($parsedData1 === false || $parsedData2 === false) {
         return false;
     }
     $diff = compareData($parsedData1, $parsedData2);
@@ -83,9 +84,8 @@ function compareData(array $data1, array $data2): array
 
     $comparedData = [...$removedData, ...$addedData, ...$updatedData, ...$equalData];
 
-    usort($comparedData, function ($item1, $item2) {
+    $sortedComparedData = sort($comparedData, function ($item1, $item2) {
         return $item1['name'] <=> $item2['name'];
     });
-
-    return $comparedData;
+    return $sortedComparedData;
 }
