@@ -20,13 +20,13 @@ function formatPlain(array $data): string
         return array_reduce(array_keys($data), function ($acc, $key) use ($iter, $data, $currentPath) {
 
             if ($currentPath !== '') {
-                $currentPath .= '.';
+                $currentPath = $currentPath . '.';
             }
             $node = $data[$key];
             $flag = $node['flag'] ?? null;
             $children = $node['children'] ?? null;
-            $name = ($node['name']) ?: $key;
-            $name = $currentPath . $name;
+            $name = $node['name'] ? $node['name'] : $key;
+            $property = $currentPath . $name;
 
             if ($flag === 'updated') {
                 if ($children) {
@@ -44,7 +44,7 @@ function formatPlain(array $data): string
                         $valueAfter = normalizeValue($node['valueAfter']);
                     }
 
-                    $acc[] = "Property '{$name}' was updated. From {$valueBefore} to {$valueAfter}";
+                    $acc[] = "Property '{$property}' was updated. From {$valueBefore} to {$valueAfter}";
                 }
             }
             if ($flag === 'added') {
@@ -53,11 +53,11 @@ function formatPlain(array $data): string
                 } else {
                     $value = normalizeValue($node['value']);
                 }
-                $acc[] = "Property '{$name}' was added with value: {$value}";
+                $acc[] = "Property '{$property}' was added with value: {$value}";
             }
 
             if ($flag === 'removed') {
-                $acc[] = "Property '{$name}' was removed";
+                $acc[] = "Property '{$property}' was removed";
             }
 
             return $acc;
