@@ -17,7 +17,8 @@ function normalizeValue(mixed $text): string|false
 function formatPlain(array $data): string
 {
     $iter = function ($data, $currentPath = '') use (&$iter) {
-        return array_reduce(array_keys($data), function ($acc, $key) use ($iter, $data, $currentPath) {
+
+        return array_map(function ($key) use ($iter, $data, $currentPath) {
 
             if ($currentPath !== '') {
                 $currentPath = $currentPath . '.';
@@ -30,7 +31,7 @@ function formatPlain(array $data): string
 
             if ($flag === 'updated') {
                 if ($children) {
-                    $acc[] = $iter($node['children'], $name);
+                    return $iter($node['children'], $property);
                 } else {
                     if (is_array($node['valueBefore'])) {
                         $valueBefore = '[complex value]';
@@ -44,7 +45,7 @@ function formatPlain(array $data): string
                         $valueAfter = normalizeValue($node['valueAfter']);
                     }
 
-                    $acc[] = "Property '{$property}' was updated. From {$valueBefore} to {$valueAfter}";
+                    return "Property '{$property}' was updated. From {$valueBefore} to {$valueAfter}";
                 }
             }
             if ($flag === 'added') {
@@ -53,16 +54,16 @@ function formatPlain(array $data): string
                 } else {
                     $value = normalizeValue($node['value']);
                 }
-                $acc[] = "Property '{$property}' was added with value: {$value}";
+                return "Property '{$property}' was added with value: {$value}";
             }
 
             if ($flag === 'removed') {
-                $acc[] = "Property '{$property}' was removed";
+                return "Property '{$property}' was removed";
             }
-
-            return $acc;
-        }, []);
+        }, array_keys($data));
     };
     $result = flatten($iter($data));
-    return implode("\n", $result);
+    $filteredResult = array_filter($result, fn($item) => $item !== null);
+
+    return implode("\n", $filteredResult);
 }
