@@ -14,7 +14,6 @@ function toString(mixed $value): string
 
 function formatStylish(array $data, string $replacer = ' ', int $spacesCount = 4): string
 {
-
     $iter = function ($currentTree, $depth) use (&$iter, $spacesCount, $replacer) {
         $indentSize = $depth * $spacesCount;
         $bracketIndent = str_repeat($replacer, $indentSize - $spacesCount);
